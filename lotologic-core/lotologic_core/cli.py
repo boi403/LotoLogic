@@ -57,23 +57,56 @@ def _generate_demo_history(game: str, n: int = 200, seed: int = 42) -> list[Draw
 
 
 def _load_history(game: str, source: Optional[str], limit: Optional[int]) -> list[Draw]:
-    """Carrega histórico. `source`: 'demo' ou None (API real)."""
+    """
+    Carrega histórico.
+
+    `source`:
+      - 'demo' → gera concursos sintéticos (offline, reprodutível com seed)
+      - 'cache' → usa só o cache local; falha se cache vazio
+      - 'live' / None → cache local + sincronização incremental com a API
+    """
     if source == "demo":
         return _generate_demo_history(game, n=limit or 200)
 
-    client = CaixaApiClient()
+    # Importação local pra não obrigar quem usa só 'demo' a ter requests etc.
+    from .data.cache import load_cache, sync_game
+
+    if source == "cache":
+        cached = load_cache(game)
+        if not cached:
+            print(
+                f"⚠️  Cache vazio para {game}. Rode `sync {game}` primeiro.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        return cached[-(limit or 200):] if limit else cached
+
+    # source = 'live' ou None: usa cache + sincroniza incrementalmente
     try:
-        latest = client.fetch_latest(game)
+        print(f"Sincronizando cache de {game}...", file=sys.stderr)
+
+        def _progress(c, target):
+            if c % 10 == 0 or c == target:
+                print(f"  baixando concurso {c}/{target}...", file=sys.stderr)
+
+        n_total, n_new = sync_game(game, progress_cb=_progress)
+        if n_new > 0:
+            print(f"  ✓ {n_new} concurso(s) novo(s) baixado(s)", file=sys.stderr)
+        else:
+            print(f"  ✓ cache já estava atualizado ({n_total} concursos)", file=sys.stderr)
     except CaixaApiError as e:
         print(f"⚠️  Falha ao acessar API: {e}", file=sys.stderr)
-        print("    Use --history demo para dados sintéticos", file=sys.stderr)
+        # Tenta cair pra cache se houver
+        from .data.cache import load_cache as _lc
+        cached = _lc(game)
+        if cached:
+            print(f"    Usando cache offline ({len(cached)} concursos)", file=sys.stderr)
+            return cached[-(limit or 200):] if limit else cached
+        print("    Sem cache. Use --history demo para dados sintéticos", file=sys.stderr)
         sys.exit(2)
 
-    last = latest.contest
-    first = max(1, last - (limit or 200) + 1)
-    print(f"Baixando concursos {first} a {last} de {game}...", file=sys.stderr)
-    draws = list(client.iter_history(game, since=first, until=last))
-    return draws
+    cached = load_cache(game)
+    return cached[-(limit or 200):] if limit else cached
 
 
 def _format_ticket(numbers: tuple[int, ...]) -> str:
@@ -213,6 +246,58 @@ def cmd_pareto(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_sync(args: argparse.Namespace) -> int:
+    """Sincroniza o cache local com a API da Caixa."""
+    from .data.cache import sync_game, get_cache_dir
+
+    targets = list(LOTERIAS.keys()) if args.game == "all" else [args.game]
+    print(f"Diretório de cache: {get_cache_dir()}\n")
+
+    total_new = 0
+    for game in targets:
+        spec = get_spec(game)
+        print(f"=== {spec.name} ({game}) ===")
+
+        def _progress(c, target):
+            if c == target or c % 25 == 0:
+                pct = 100 * c / target if target else 0
+                print(f"  {c}/{target} ({pct:.0f}%)", end="\r", file=sys.stderr)
+
+        try:
+            n_total, n_new = sync_game(
+                game, full_resync=args.full, progress_cb=_progress
+            )
+            print(f"  ✓ {n_total} concursos no cache (+{n_new} novos)        ")
+            total_new += n_new
+        except CaixaApiError as e:
+            print(f"  ✗ erro: {e}")
+
+    print(f"\nSync concluído. {total_new} concurso(s) novo(s) no total.")
+    return 0
+
+
+def cmd_cache_info(args: argparse.Namespace) -> int:
+    """Mostra estado do cache local."""
+    from .data.cache import cache_summary, get_cache_dir
+
+    cache_dir = get_cache_dir()
+    print(f"Cache em: {cache_dir}\n")
+
+    summary = cache_summary()
+    if not summary:
+        print("Cache vazio. Rode `sync all` para baixar concursos.")
+        return 0
+
+    print(f"{'Loteria':14s} {'Concursos':>10s}  {'Faixa':>15s}  {'Última sync':>20s}")
+    print("-" * 65)
+    for game, info in sorted(summary.items()):
+        faixa = f"{info['first_contest']}-{info['last_contest']}"
+        synced = (info.get("last_synced") or "")[:19]
+        print(f"{game:14s} {info['n_draws']:>10d}  {faixa:>15s}  {synced:>20s}")
+    return 0
+
+
+
 def cmd_covering(args: argparse.Namespace) -> int:
     pool = tuple(int(x) for x in args.pool.split(","))
     print(
@@ -236,9 +321,13 @@ def cmd_covering(args: argparse.Namespace) -> int:
 def _add_history_flags(p: argparse.ArgumentParser) -> None:
     p.add_argument(
         "--history",
-        choices=["demo", "live"],
+        choices=["demo", "live", "cache"],
         default="live",
-        help="'demo' usa concursos sintéticos (offline); 'live' busca da Caixa (default)",
+        help=(
+            "'demo' usa concursos sintéticos (offline); "
+            "'cache' usa só o cache local sem rede; "
+            "'live' usa cache + sincronização incremental com a Caixa (default)"
+        ),
     )
     p.add_argument(
         "--limit", type=int, default=200, help="Quantos concursos usar (default 200)"
@@ -299,6 +388,23 @@ def build_parser() -> argparse.ArgumentParser:
     p_cov.add_argument("--t", type=int, required=True, help="Garantia (faixa)")
     p_cov.add_argument("--seed", type=int, default=None)
 
+    p_sync = sub.add_parser(
+        "sync", help="Baixa/atualiza cache local de concursos da Caixa"
+    )
+    p_sync.add_argument(
+        "game",
+        help="Nome da loteria (megasena, lotofacil, ...) ou 'all' para todas",
+    )
+    p_sync.add_argument(
+        "--full",
+        action="store_true",
+        help="Re-baixa tudo do zero (ignora cache existente)",
+    )
+
+    sub.add_parser(
+        "cache-info", help="Mostra estado do cache local de concursos"
+    )
+
     return parser
 
 
@@ -310,6 +416,8 @@ COMMAND_DISPATCH = {
     "backtest": cmd_backtest,
     "pareto": cmd_pareto,
     "covering": cmd_covering,
+    "sync": cmd_sync,
+    "cache-info": cmd_cache_info,
 }
 
 

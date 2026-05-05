@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribuição / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# Testes / cache
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs gerados pelo sync_dados.bat
+sync_log.txt
+
+# Arquivos vazios criados acidentalmente no Windows
+/cd
+/pip
+/python
+/App

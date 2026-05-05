@@ -1,0 +1,62 @@
+name: Atualizar cache de loterias
+
+# Roda diariamente às 23h (horário de Brasília = 02h UTC)
+# Os sorteios da Caixa terminam por volta das 20-22h, então 23h cobre tudo.
+on:
+  schedule:
+    - cron: '0 2 * * *'   # 02:00 UTC = 23:00 BRT
+  # Permite rodar manualmente pela aba "Actions" do GitHub
+  workflow_dispatch:
+  # Roda também quando o código do core muda (pra validar build)
+  push:
+    paths:
+      - 'lotologic-core/**'
+      - '.github/workflows/sync-cache.yml'
+
+jobs:
+  sync:
+    name: Sync e commit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # necessário para `git push` do cache
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+
+      - name: Instalar lotologic-core
+        working-directory: lotologic-core
+        run: |
+          pip install -e .
+
+      - name: Rodar testes (sanidade)
+        working-directory: lotologic-core
+        run: |
+          pip install pytest
+          pytest tests -q
+
+      - name: Sync de todas as loterias
+        working-directory: lotologic-core
+        env:
+          LOTOLOGIC_CACHE_DIR: ${{ github.workspace }}/lotologic-core/data-cache
+        run: |
+          python -m lotologic_core.cli sync all
+          python -m lotologic_core.cli cache-info
+
+      - name: Commit do cache atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lotologic-core/data-cache/
+          if git diff --staged --quiet; then
+            echo "Nenhuma mudança no cache — pulando commit."
+          else
+            git commit -m "chore(cache): sync diário das loterias [skip ci]"
+            git push
+          fi

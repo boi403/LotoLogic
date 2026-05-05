@@ -57,15 +57,44 @@ def _parse_caixa_date(s: Optional[str]) -> Optional[date]:
 
 
 def _payload_to_draw(game: str, payload: dict) -> Draw:
-    """Converte payload bruto da API em entidade Draw."""
+    """Converte payload bruto da API em entidade Draw.
+
+    Casos especiais:
+
+    - **Super Sete**: a API retorna 7 dígitos (0-9), um por coluna, podendo
+      repetir entre colunas. Usamos encoding virtual `coluna*10 + dígito`
+      (col 1 → 0..9, col 2 → 10..19, ..., col 7 → 60..69) para caber no
+      modelo geral de "tupla de inteiros únicos". Isso bate com o universe=70
+      definido em domain/lottery.py.
+
+    - **Dupla Sena**: cada concurso tem 2 sorteios independentes ('1' e '2').
+      A API retorna 12 dezenas (6+6) concatenadas. Usamos só o primeiro
+      sorteio (mais comum em análises) — o segundo é equivalente
+      estatisticamente para frequência/atraso de longo prazo.
+    """
     spec = get_spec(game)
     raw_numbers = payload.get("dezenas") or payload.get("dezenasOrdemSorteio") or []
-    numbers = tuple(int(n) for n in raw_numbers)
-    if len(numbers) != spec.draw_size:
-        raise CaixaApiError(
-            f"{game}#{payload.get('concurso')}: "
-            f"esperava {spec.draw_size} dezenas, recebi {len(numbers)}"
-        )
+
+    # Super Sete: encoding virtual coluna*10 + dígito
+    if game == "supersete":
+        digits = [int(n) for n in raw_numbers]
+        if len(digits) != spec.draw_size:
+            raise CaixaApiError(
+                f"{game}#{payload.get('concurso')}: "
+                f"esperava {spec.draw_size} dígitos, recebi {len(digits)}"
+            )
+        numbers = tuple(col * 10 + dig for col, dig in enumerate(digits))
+    # Dupla Sena: pega só o 1º sorteio (primeiras 6 dezenas)
+    elif game == "duplasena" and len(raw_numbers) == spec.draw_size * 2:
+        numbers = tuple(int(n) for n in raw_numbers[: spec.draw_size])
+    else:
+        numbers = tuple(int(n) for n in raw_numbers)
+        if len(numbers) != spec.draw_size:
+            raise CaixaApiError(
+                f"{game}#{payload.get('concurso')}: "
+                f"esperava {spec.draw_size} dezenas, recebi {len(numbers)}"
+            )
+
     return Draw(
         contest=int(payload["concurso"]),
         game=game,
