@@ -450,26 +450,6 @@ chmod +x LotoLogic_4.2.8_amd64.AppImage && ./LotoLogic_4.2.8_amd64.AppImage
 
 ---
 
-## 📣 Anuncie no LotoLogic
-
-O LotoLogic é usado por apostadores ativos e apaixonados por loterias. Se você tem um produto ou serviço relevante para esse público, **sua marca pode estar dentro do app** — direto na frente de quem mais importa para você.
-
-Temos diversas áreas de anúncio disponíveis dentro do sistema, com alto impacto visual e audiência qualificada.
-
-📲 **Fale comigo no WhatsApp:** [+55 19 99802-1956](https://wa.me/5519998021956)
-
----
-
-## 💚 Apoie o Projeto
-
-O LotoLogic é desenvolvido de forma independente, com muito café e muitas horas de trabalho. Se ele te ajudou a apostar com mais estratégia — e especialmente se um dia você ganhar na loteria com a ajuda dele — lembre-se de ser generoso com quem te ajudou! 😄
-
-**Qualquer valor é muito apreciado.**
-
-> 💸 **Chave PIX:** `dante.testa@gmail.com`
-
----
-
 ## 📋 Changelog
 
 ### v4.2.8
