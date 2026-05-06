@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="https://lotologic.com.br/logo-lotologic.png" width="220" alt="LotoLogic" />
-
+ 
   <h1>LotoLogic — Manual Completo</h1>
 
   <p><strong>O laboratório de análise de loterias da CAIXA mais completo para apostadores sérios.</strong><br/>
