@@ -1,7 +1,7 @@
 {
   "game": "lotomania",
-  "last_synced": "2026-05-05T20:45:14",
-  "n_draws": 2919,
+  "last_synced": "2026-05-07T05:33:31",
+  "n_draws": 2920,
   "draws": [
     {
       "contest": 1,
@@ -81733,6 +81733,34 @@
         97
       ],
       "draw_date": "2026-05-04",
+      "accumulated": true
+    },
+    {
+      "contest": 2920,
+      "game": "lotomania",
+      "numbers": [
+        1,
+        9,
+        14,
+        43,
+        44,
+        49,
+        51,
+        54,
+        55,
+        57,
+        79,
+        82,
+        87,
+        90,
+        91,
+        92,
+        93,
+        97,
+        98,
+        99
+      ],
+      "draw_date": "2026-05-06",
       "accumulated": true
     }
   ]
