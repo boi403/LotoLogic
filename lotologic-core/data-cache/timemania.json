@@ -1,7 +1,7 @@
 {
   "game": "timemania",
-  "last_synced": "2026-05-08T04:54:54",
-  "n_draws": 2372,
+  "last_synced": "2026-05-11T06:00:41",
+  "n_draws": 2373,
   "draws": [
     {
       "contest": 1,
@@ -35581,6 +35581,21 @@
         71
       ],
       "draw_date": "2026-05-07",
+      "accumulated": true
+    },
+    {
+      "contest": 2389,
+      "game": "timemania",
+      "numbers": [
+        4,
+        6,
+        13,
+        36,
+        47,
+        56,
+        63
+      ],
+      "draw_date": "2026-05-09",
       "accumulated": true
     }
   ]
