@@ -1,7 +1,7 @@
 {
   "game": "lotofacil",
-  "last_synced": "2026-05-22T06:09:27",
-  "n_draws": 3691,
+  "last_synced": "2026-05-23T05:40:43",
+  "n_draws": 3692,
   "draws": [
     {
       "contest": 1,
@@ -84894,6 +84894,29 @@
         25
       ],
       "draw_date": "2026-05-21",
+      "accumulated": false
+    },
+    {
+      "contest": 3692,
+      "game": "lotofacil",
+      "numbers": [
+        2,
+        3,
+        5,
+        6,
+        7,
+        9,
+        10,
+        13,
+        14,
+        15,
+        19,
+        20,
+        23,
+        24,
+        25
+      ],
+      "draw_date": "2026-05-22",
       "accumulated": false
     }
   ]
