@@ -1,7 +1,7 @@
 {
   "game": "duplasena",
-  "last_synced": "2026-07-16T05:12:12",
-  "n_draws": 2983,
+  "last_synced": "2026-07-18T04:50:05",
+  "n_draws": 2984,
   "draws": [
     {
       "contest": 1,
@@ -41763,6 +41763,20 @@
         46
       ],
       "draw_date": "2026-07-15",
+      "accumulated": true
+    },
+    {
+      "contest": 2984,
+      "game": "duplasena",
+      "numbers": [
+        2,
+        6,
+        11,
+        12,
+        27,
+        37
+      ],
+      "draw_date": "2026-07-17",
       "accumulated": true
     }
   ]
