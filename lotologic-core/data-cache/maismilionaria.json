@@ -1,7 +1,7 @@
 {
   "game": "maismilionaria",
-  "last_synced": "2026-08-20T02:56:58",
-  "n_draws": 382,
+  "last_synced": "2026-08-24T03:03:31",
+  "n_draws": 383,
   "draws": [
     {
       "contest": 1,
@@ -5349,6 +5349,20 @@
         48
       ],
       "draw_date": "2026-08-19",
+      "accumulated": true
+    },
+    {
+      "contest": 383,
+      "game": "maismilionaria",
+      "numbers": [
+        3,
+        4,
+        16,
+        18,
+        39,
+        45
+      ],
+      "draw_date": "2026-08-23",
       "accumulated": true
     }
   ]
