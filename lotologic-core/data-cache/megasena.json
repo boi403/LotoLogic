@@ -1,7 +1,7 @@
 {
   "game": "megasena",
-  "last_synced": "2026-08-26T03:05:15",
-  "n_draws": 3049,
+  "last_synced": "2026-08-28T13:54:05",
+  "n_draws": 3050,
   "draws": [
     {
       "contest": 1,
@@ -42687,6 +42687,20 @@
         55
       ],
       "draw_date": "2026-08-25",
+      "accumulated": true
+    },
+    {
+      "contest": 3050,
+      "game": "megasena",
+      "numbers": [
+        11,
+        14,
+        30,
+        38,
+        49,
+        55
+      ],
+      "draw_date": "2026-08-27",
       "accumulated": true
     }
   ]
