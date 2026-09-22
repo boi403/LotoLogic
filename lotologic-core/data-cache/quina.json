@@ -1,7 +1,7 @@
 {
   "game": "quina",
-  "last_synced": "2026-09-21T07:42:42",
-  "n_draws": 7122,
+  "last_synced": "2026-09-22T07:24:57",
+  "n_draws": 7123,
   "draws": [
     {
       "contest": 1,
@@ -92587,6 +92587,19 @@
         72
       ],
       "draw_date": "2026-09-20",
+      "accumulated": true
+    },
+    {
+      "contest": 7123,
+      "game": "quina",
+      "numbers": [
+        14,
+        19,
+        42,
+        53,
+        60
+      ],
+      "draw_date": "2026-09-21",
       "accumulated": true
     }
   ]
