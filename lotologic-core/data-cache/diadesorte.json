@@ -1,7 +1,7 @@
 {
   "game": "diadesorte",
-  "last_synced": "2026-10-24T06:56:13",
-  "n_draws": 1330,
+  "last_synced": "2026-10-25T07:20:41",
+  "n_draws": 1331,
   "draws": [
     {
       "contest": 1,
@@ -19951,6 +19951,21 @@
         31
       ],
       "draw_date": "2026-10-23",
+      "accumulated": true
+    },
+    {
+      "contest": 1331,
+      "game": "diadesorte",
+      "numbers": [
+        10,
+        11,
+        23,
+        26,
+        28,
+        29,
+        30
+      ],
+      "draw_date": "2026-10-24",
       "accumulated": true
     }
   ]
