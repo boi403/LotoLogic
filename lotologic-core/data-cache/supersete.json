@@ -1,7 +1,7 @@
 {
   "game": "supersete",
-  "last_synced": "2026-11-14T08:41:55",
-  "n_draws": 922,
+  "last_synced": "2026-11-17T10:18:03",
+  "n_draws": 923,
   "draws": [
     {
       "contest": 1,
@@ -13831,6 +13831,21 @@
         68
       ],
       "draw_date": "2026-11-13",
+      "accumulated": true
+    },
+    {
+      "contest": 923,
+      "game": "supersete",
+      "numbers": [
+        2,
+        14,
+        20,
+        36,
+        49,
+        54,
+        61
+      ],
+      "draw_date": "2026-11-16",
       "accumulated": true
     }
   ]
